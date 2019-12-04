@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh_CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="场景一 :  如果自定义了系统导航栏的返回按钮, 系统的左侧边缘返回手势将会失效解决思路如下: UINavigationController的属性中, 系统的返回手势是 interactivePopGestureRecognizer 这个手势所处理的 一旦在某个页面自定义了系统导航栏的返回按钮, interactivePopGestureRecognizer 就会让当前页面的左侧边缘返回手势失效,">
+<meta name="keywords" content="iOS,Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="让 iOS APP 支持全屏返回">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;12&#x2F;04&#x2F;%E8%AE%A9-iOS-APP-%E6%94%AF%E6%8C%81%E5%85%A8%E5%B1%8F%E8%BF%94%E5%9B%9E&#x2F;index.html">
+<meta property="og:site_name" content="coderchou的blog">
+<meta property="og:description" content="场景一 :  如果自定义了系统导航栏的返回按钮, 系统的左侧边缘返回手势将会失效解决思路如下: UINavigationController的属性中, 系统的返回手势是 interactivePopGestureRecognizer 这个手势所处理的 一旦在某个页面自定义了系统导航栏的返回按钮, interactivePopGestureRecognizer 就会让当前页面的左侧边缘返回手势失效,">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:updated_time" content="2019-12-04T06:35:54.126Z">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/12/04/让-iOS-APP-支持全屏返回/"/>
+
+
+
+
+
+  <title>让 iOS APP 支持全屏返回 | coderchou的blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh_CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">coderchou的blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">木叶飞舞之处 火亦生生不息</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/%20" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/12/04/%E8%AE%A9-iOS-APP-%E6%94%AF%E6%8C%81%E5%85%A8%E5%B1%8F%E8%BF%94%E5%9B%9E/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="coderchou">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="coderchou的blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">让 iOS APP 支持全屏返回</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-12-04T14:35:22+08:00">
+                2019-12-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="场景一-如果自定义了系统导航栏的返回按钮-系统的左侧边缘返回手势将会失效"><a href="#场景一-如果自定义了系统导航栏的返回按钮-系统的左侧边缘返回手势将会失效" class="headerlink" title="场景一 :  如果自定义了系统导航栏的返回按钮, 系统的左侧边缘返回手势将会失效"></a>场景一 :  如果自定义了系统导航栏的返回按钮, 系统的左侧边缘返回手势将会失效</h3><h5 id="解决思路如下"><a href="#解决思路如下" class="headerlink" title="解决思路如下:"></a>解决思路如下:</h5><ul>
+<li><code>UINavigationController</code>的属性中, 系统的返回手势是 <code>interactivePopGestureRecognizer</code> 这个手势所处理的</li>
+<li>一旦在某个页面自定义了系统导航栏的返回按钮, <code>interactivePopGestureRecognizer</code> 就会让当前页面的左侧边缘返回手势失效, 但是其他使用系统返回按钮的页面依然可以右滑返回, 所以系统做了特殊处理</li>
+<li>而这种情况是由 <code>interactivePopGestureRecognizer</code> 的 <code>delegate</code> 所导致的</li>
+<li>解决方式是只要设置 <code>interactivePopGestureRecognizer</code> 的 <code>delegate</code> 为<code>nil</code>, 如果自定义了系统导航栏的返回按钮, 当前页面也可以右滑返回</li>
+<li>需要注意的是, 当<code>UINavigationController</code> 只有一个子控制器时 , 这时如果在屏幕左侧边缘触发右滑手势, app 将会卡住无法响应, 这是因为 <code>interactivePopGestureRecognizer</code> 的 <code>deleagete</code>此时不能为<code>nil</code> , 需要<code>delegate</code> 来处理这种特殊的情况</li>
+<li>自定义一个<code>UINavigationController</code>的子类, 在子类内部做特殊处理<h5 id="代码如下"><a href="#代码如下" class="headerlink" title="代码如下:"></a>代码如下:</h5><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">"NavViewController.h"</span></span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">NavViewController</span> ()&lt;<span class="title">UINavigationControllerDelegate</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line"><span class="comment">/** tz_PopDelegate */</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="keyword">id</span> tz_PopDelegate;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">@end</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">10</span></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">NavViewController</span></span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">11</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">12</span></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">13</span></pre></td><td class="code"><pre><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">14</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">//保存 interactivePopGestureRecognizer 的delegate</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">15</span></pre></td><td class="code"><pre><span class="line">    <span class="keyword">self</span>.tz_PopDelegate = <span class="keyword">self</span>.interactivePopGestureRecognizer.delegate;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">16</span></pre></td><td class="code"><pre><span class="line">    <span class="keyword">self</span>.delegate = <span class="keyword">self</span>;   </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">17</span></pre></td><td class="code"><pre><span class="line">&#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">18</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">19</span></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)didReceiveMemoryWarning &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">20</span></pre></td><td class="code"><pre><span class="line">    [<span class="keyword">super</span> didReceiveMemoryWarning];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">21</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">// Dispose of any resources that can be recreated.</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">22</span></pre></td><td class="code"><pre><span class="line">&#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">23</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">24</span></pre></td><td class="code"><pre><span class="line"><span class="meta">#pragma mark - UINavigationControllerDelegate</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">25</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">26</span></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)navigationController:(<span class="built_in">UINavigationController</span> *)navigationController didShowViewController:(<span class="built_in">UIViewController</span> *)viewController animated:(<span class="built_in">BOOL</span>)animated &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">27</span></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"控制器个数: %ld"</span>,<span class="keyword">self</span>.childViewControllers.count);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">28</span></pre></td><td class="code"><pre><span class="line">        <span class="keyword">self</span>.interactivePopGestureRecognizer.enabled = <span class="literal">YES</span>;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">29</span></pre></td><td class="code"><pre><span class="line">    <span class="keyword">if</span> (viewController == <span class="keyword">self</span>.viewControllers[<span class="number">0</span>]) &#123;  <span class="comment">//如果是在首页,设置interactivePopGestureRecognizer的delegate</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">30</span></pre></td><td class="code"><pre><span class="line">        <span class="keyword">self</span>.interactivePopGestureRecognizer.delegate = <span class="keyword">self</span>.tz_PopDelegate; <span class="comment">// 不支持侧滑</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">31</span></pre></td><td class="code"><pre><span class="line">    &#125; <span class="keyword">else</span> &#123; <span class="comment">//如果是二级页面, 设置 interactivePopGestureRecognizer的代理为nil, 支持侧滑</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">32</span></pre></td><td class="code"><pre><span class="line">        <span class="keyword">self</span>.interactivePopGestureRecognizer.delegate = <span class="literal">nil</span>; <span class="comment">// 支持侧滑</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">33</span></pre></td><td class="code"><pre><span class="line">    &#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">34</span></pre></td><td class="code"><pre><span class="line">&#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">35</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">36</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">@end</span></span></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h3 id="场景二-系统默认的侧滑返回手势-只能在左侧边缘右滑触发-而现在很多app-都有全屏返回这个需求"><a href="#场景二-系统默认的侧滑返回手势-只能在左侧边缘右滑触发-而现在很多app-都有全屏返回这个需求" class="headerlink" title="场景二 : 系统默认的侧滑返回手势, 只能在左侧边缘右滑触发,  而现在很多app 都有全屏返回这个需求"></a>场景二 : 系统默认的侧滑返回手势, 只能在左侧边缘右滑触发,  而现在很多app 都有全屏返回这个需求</h3><h5 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法:"></a>解决方法:</h5><ul>
+<li>使用<code>Runtime+KVC</code> 分析 <code>UINavigationController</code>的 <code>interactivePopGestureRecognizer</code> 属性, 打印 <code>interactivePopGestureRecognizer</code>这个对象<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">"NavViewController2.h"</span></span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">NavViewController2</span> ()</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">@end</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">NavViewController2</span></span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">10</span></pre></td><td class="code"><pre><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">11</span></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"手势 : \n%@"</span>, <span class="keyword">self</span>.interactivePopGestureRecognizer);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">12</span></pre></td><td class="code"><pre><span class="line">&#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">13</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">14</span></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)didReceiveMemoryWarning &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">15</span></pre></td><td class="code"><pre><span class="line">    [<span class="keyword">super</span> didReceiveMemoryWarning];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">16</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">// Dispose of any resources that can be recreated.</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">17</span></pre></td><td class="code"><pre><span class="line">&#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">18</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">@end</span></span></pre></td></tr></table></figure></li>
+<li>打印结果<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">手势 : </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">&lt;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line">UIScreenEdgePanGestureRecognizer: 0x7f9def50ee30;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">state &#x3D; Possible; </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line">delaysTouchesBegan &#x3D; YES; </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line">view &#x3D; &lt;UILayoutContainerView 0x7f9def602b10&gt;; </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line">target&#x3D; &lt;(</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line">                    action&#x3D;handleNavigationTransition:,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line">                    target&#x3D;&lt;_UINavigationInteractiveTransition 0x7f9def50c760&gt;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">10</span></pre></td><td class="code"><pre><span class="line">                )&gt;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">11</span></pre></td><td class="code"><pre><span class="line">&gt;</span></pre></td></tr></table></figure></li>
+<li>可以发现, <code>interactivePopGestureRecognizer</code> 其实是<code>UIScreenEdgePanGestureRecognizer</code>的一个实例</li>
+<li>查看<code>UIScreenEdgePanGestureRecognizer</code>的头文件, 可以发现有一个属性<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line"><span class="comment">//  UIScreenEdgePanGestureRecognizer.h</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line"><span class="comment">//  Copyright (c) 2012-2017 Apple Inc. All rights reserved.</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line"><span class="comment">//</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;UIKit/UIGeometry.h&gt;</span></span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">&lt;UIKit/UIPanGestureRecognizer.h&gt;</span></span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line"><span class="built_in">NS_ASSUME_NONNULL_BEGIN</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">10</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">11</span></pre></td><td class="code"><pre><span class="line"><span class="comment">/*! This subclass of UIPanGestureRecognizer only recognizes if the user slides their finger</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">12</span></pre></td><td class="code"><pre><span class="line"><span class="comment">    in from the bezel on the specified edge. */</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">13</span></pre></td><td class="code"><pre><span class="line"><span class="built_in">NS_CLASS_AVAILABLE_IOS</span>(<span class="number">7</span>_0) __TVOS_PROHIBITED <span class="class"><span class="keyword">@interface</span> <span class="title">UIScreenEdgePanGestureRecognizer</span> : <span class="title">UIPanGestureRecognizer</span></span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">14</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">@property</span> (<span class="keyword">readwrite</span>, <span class="keyword">nonatomic</span>, <span class="keyword">assign</span>) <span class="built_in">UIRectEdge</span> edges; <span class="comment">//&lt; The edges on which this gesture recognizes, relative to the current interface orientation</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">15</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">@end</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">16</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">17</span></pre></td><td class="code"><pre><span class="line"><span class="built_in">NS_ASSUME_NONNULL_END</span></span></pre></td></tr></table></figure></li>
+<li>但是直接修改<code>edges</code>这个属性并不能扩大手势响应范围</li>
+<li>上面的打印结果中, 有个属性是我们所需要的<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">target&#x3D; &lt;(</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">                    action&#x3D;handleNavigationTransition:,</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line">                    target&#x3D;&lt;_UINavigationInteractiveTransition 0x7f9def50c760&gt;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">                )&gt;</span></pre></td></tr></table></figure></li>
+<li>但是直接通过<code>KVC</code>获取这个属性程序会崩溃, 因为<code>interactivePopGestureRecognizer</code>这个对象中并不存在<code>target</code>这个属性</li>
+<li>通过<code>Runtime</code>打印<code>interactivePopGestureRecognizer</code>的所有属性, 结果如下:<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"手势 : %@"</span>, <span class="keyword">self</span>.interactivePopGestureRecognizer);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">    </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> count = <span class="number">0</span>;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line">    Ivar *var = class_copyIvarList([<span class="built_in">UIGestureRecognizer</span> <span class="keyword">class</span>], &amp;count);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; count; i++) &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line">        Ivar aVar = *(var + i);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"成员变量类型%d: %s"</span>, i,ivar_getTypeEncoding(aVar));</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">10</span></pre></td><td class="code"><pre><span class="line">        <span class="built_in">NSLog</span>(<span class="string">@"成员变量名%d: %s"</span>,i,ivar_getName(aVar));</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">11</span></pre></td><td class="code"><pre><span class="line">    &#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">12</span></pre></td><td class="code"><pre><span class="line">&#125;</span></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.095436+0800 ATest[1487:44665] 成员变量名0: _gestureFlags</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.095597+0800 ATest[1487:44665] 成员变量类型1: @&quot;NSMutableArray&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.095835+0800 ATest[1487:44665] 成员变量名1: _targets</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.095989+0800 ATest[1487:44665] 成员变量类型2: @&quot;NSMutableArray&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.096124+0800 ATest[1487:44665] 成员变量名2: _delayedTouches</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.096228+0800 ATest[1487:44665] 成员变量类型3: @&quot;NSMutableArray&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.096341+0800 ATest[1487:44665] 成员变量名3: _delayedPresses</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.096466+0800 ATest[1487:44665] 成员变量类型4: @&quot;UIView&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.096892+0800 ATest[1487:44665] 成员变量名4: _view</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">10</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.097113+0800 ATest[1487:44665] 成员变量类型5: d</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">11</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.097449+0800 ATest[1487:44665] 成员变量名5: _lastTouchTimestamp</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">12</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.097763+0800 ATest[1487:44665] 成员变量类型6: d</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">13</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.098047+0800 ATest[1487:44665] 成员变量名6: _firstEventTimestamp</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">14</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.098333+0800 ATest[1487:44665] 成员变量类型7: q</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">15</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.098614+0800 ATest[1487:44665] 成员变量名7: _state</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">16</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.098872+0800 ATest[1487:44665] 成员变量类型8: q</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">17</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.099156+0800 ATest[1487:44665] 成员变量名8: _allowedTouchTypes</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">18</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.099388+0800 ATest[1487:44665] 成员变量类型9: q</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">19</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.099604+0800 ATest[1487:44665] 成员变量名9: _initialTouchType</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">20</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.099885+0800 ATest[1487:44665] 成员变量类型10: @&quot;NSMutableSet&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">21</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.100095+0800 ATest[1487:44665] 成员变量名10: _internalActiveTouches</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">22</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.100408+0800 ATest[1487:44665] 成员变量类型11: @&quot;_UIForceLevelClassifier&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">23</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.100660+0800 ATest[1487:44665] 成员变量名11: _forceClassifier</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">24</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.100925+0800 ATest[1487:44665] 成员变量类型12: q</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">25</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.101146+0800 ATest[1487:44665] 成员变量名12: _requiredPreviewForceState</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">26</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.101982+0800 ATest[1487:44665] 成员变量类型13: @&quot;_UITouchForceObservable&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">27</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.102227+0800 ATest[1487:44665] 成员变量名13: _touchForceObservable</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">28</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.102449+0800 ATest[1487:44665] 成员变量类型14: @&quot;NSObservation&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">29</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.102747+0800 ATest[1487:44665] 成员变量名14: _touchForceObservableAndClassifierObservation</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">30</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.103067+0800 ATest[1487:44665] 成员变量类型15: @&quot;NSMutableArray&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">31</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.103271+0800 ATest[1487:44665] 成员变量名15: _forceTargets</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">32</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.103465+0800 ATest[1487:44665] 成员变量类型16: Q</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">33</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.103784+0800 ATest[1487:44665] 成员变量名16: _forcePressCount</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">34</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.104055+0800 ATest[1487:44665] 成员变量类型17: @&quot;NSObservationSource&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">35</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.104353+0800 ATest[1487:44665] 成员变量名17: _beganObservable</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">36</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.104579+0800 ATest[1487:44665] 成员变量类型18: @&quot;NSMutableSet&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">37</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.104839+0800 ATest[1487:44665] 成员变量名18: _failureRequirements</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">38</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.105092+0800 ATest[1487:44665] 成员变量类型19: @&quot;NSMutableSet&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">39</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.105312+0800 ATest[1487:44665] 成员变量名19: _failureDependents</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">40</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.105589+0800 ATest[1487:44665] 成员变量类型20: @&quot;NSMutableSet&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">41</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.105847+0800 ATest[1487:44665] 成员变量名20: _activeEvents</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">42</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.106136+0800 ATest[1487:44665] 成员变量类型21: B</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">43</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.106677+0800 ATest[1487:44665] 成员变量名21: _keepTouchesOnContinuation</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">44</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.107423+0800 ATest[1487:44665] 成员变量类型22: @&quot;&lt;UIGestureRecognizerDelegate&gt;&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">45</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.107614+0800 ATest[1487:44665] 成员变量名22: _delegate</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">46</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.107885+0800 ATest[1487:44665] 成员变量类型23: @&quot;NSArray&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">47</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.108180+0800 ATest[1487:44665] 成员变量名23: _allowedPressTypes</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">48</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.108481+0800 ATest[1487:44665] 成员变量类型24: @&quot;NSString&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">49</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.108730+0800 ATest[1487:44665] 成员变量名24: _name</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">50</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.109045+0800 ATest[1487:44665] 成员变量类型25: @&quot;UIGestureEnvironment&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">51</span></pre></td><td class="code"><pre><span class="line">2018-04-17 10:58:53.109347+0800 ATest[1487:44665] 成员变量名25: _gestureEnvironment</span></pre></td></tr></table></figure></li>
+<li>可以发现, <code>interactivePopGestureRecognizer</code>这个对象中有<code>_targets</code>这个可变数组, 这是我们想要的</li>
+<li>打印<code>_targets</code>变量</li>
+</ul>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line"><span class="comment">//打印_tagets</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSMutableArray</span> * _targets = [<span class="keyword">self</span>.interactivePopGestureRecognizer valueForKey:<span class="string">@"targets"</span>];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"_targets == %@"</span>,_targets);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"_targets[0] == %@"</span>,_targets[<span class="number">0</span>]);</span></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line"> _targets &#x3D;&#x3D; (</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">    &quot;(action&#x3D;handleNavigationTransition:, target&#x3D;&lt;_UINavigationInteractiveTransition 0x7ffa6ec03560&gt;)&quot;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line">)</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">2018-04-17 11:13:33.695306+0800 ATest[1617:52185] _targets[0] &#x3D;&#x3D; (action&#x3D;handleNavigationTransition:, target&#x3D;&lt;_UINavigationInteractiveTransition 0x7ffa6ec03560&gt;)</span></pre></td></tr></table></figure>
+<ul>
+<li>可以发现, <code>_targets</code>这个数组中的元素是 <code>target-action</code>这种格式的, 可以猜测系统的手势中, 是通过一个对象来保存手势的<code>taget</code> 和这个<code>taget</code>对应的<code>action</code>的, 并把这个对象添加到<code>_targets</code>这个数组中保存起来, 通过断点调试得到保存<code>target-action</code>的是<code>UIGestureRecognizerTarget</code>这个私有类</li>
+<li>最终解决方法如下:<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">NavViewController2</span> () &lt;<span class="title">UIGestureRecognizerDelegate</span>&gt;</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">weak</span>) <span class="built_in">UIPanGestureRecognizer</span> *popRecognizer;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">@end</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">NavViewController2</span></span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">10</span></pre></td><td class="code"><pre><span class="line">    </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">11</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">// 注意 : 要让interactivePopGestureRecognizer失效</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">12</span></pre></td><td class="code"><pre><span class="line">    <span class="keyword">self</span>.interactivePopGestureRecognizer.enabled = <span class="literal">NO</span>;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">13</span></pre></td><td class="code"><pre><span class="line">    </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">14</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">//自定义pan手势</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">15</span></pre></td><td class="code"><pre><span class="line">    <span class="built_in">UIPanGestureRecognizer</span> *popRecognizer = [[<span class="built_in">UIPanGestureRecognizer</span> alloc] init];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">16</span></pre></td><td class="code"><pre><span class="line">    popRecognizer.delegate = <span class="keyword">self</span>;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">17</span></pre></td><td class="code"><pre><span class="line">    popRecognizer.maximumNumberOfTouches = <span class="number">1</span>;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">18</span></pre></td><td class="code"><pre><span class="line">    [<span class="keyword">self</span>.interactivePopGestureRecognizer.view addGestureRecognizer:popRecognizer];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">19</span></pre></td><td class="code"><pre><span class="line">    </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">20</span></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSMutableArray</span> *_targets = [<span class="keyword">self</span>.interactivePopGestureRecognizer valueForKey:<span class="string">@"_targets"</span>];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">21</span></pre></td><td class="code"><pre><span class="line">    </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">22</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">//获取保存target-action的对象, 是私有类 UIGestureRecognizerTarget 的实例</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">23</span></pre></td><td class="code"><pre><span class="line">    <span class="keyword">id</span> gestureRecognizerTarget = [_targets firstObject];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">24</span></pre></td><td class="code"><pre><span class="line">    </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">25</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">//获取UIGestureRecognizerTarget中保存的target, 是私有类_UINavigationInteractiveTransition的实例</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">26</span></pre></td><td class="code"><pre><span class="line">    <span class="keyword">id</span> interactiveTransition = [gestureRecognizerTarget valueForKey:<span class="string">@"_target"</span>];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">27</span></pre></td><td class="code"><pre><span class="line">    </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">28</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">//获取UIGestureRecognizerTarget中保存的action, 是interactiveTransition中响应手势的方法</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">29</span></pre></td><td class="code"><pre><span class="line">    SEL handleTransition = <span class="built_in">NSSelectorFromString</span>(<span class="string">@"handleNavigationTransition:"</span>);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">30</span></pre></td><td class="code"><pre><span class="line">    </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">31</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">//绑定taget-action</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">32</span></pre></td><td class="code"><pre><span class="line">    [popRecognizer addTarget:interactiveTransition action:handleTransition];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">33</span></pre></td><td class="code"><pre><span class="line">&#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">34</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">35</span></pre></td><td class="code"><pre><span class="line"><span class="meta">#pragma mark - UIGestureRecognizerDelegate</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">36</span></pre></td><td class="code"><pre><span class="line">- (<span class="built_in">BOOL</span>)gestureRecognizerShouldBegin:(<span class="built_in">UIGestureRecognizer</span> *)gestureRecognizer &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">37</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">/**</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">38</span></pre></td><td class="code"><pre><span class="line"><span class="comment">     *  这里有两个条件不允许手势执行:</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">39</span></pre></td><td class="code"><pre><span class="line"><span class="comment">     *  1、当前控制器为根控制器；</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">40</span></pre></td><td class="code"><pre><span class="line"><span class="comment">     *  2、如果这个push、pop动画正在执行（私有属性）</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">41</span></pre></td><td class="code"><pre><span class="line"><span class="comment">     */</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">42</span></pre></td><td class="code"><pre><span class="line">    <span class="keyword">return</span> <span class="keyword">self</span>.viewControllers.count != <span class="number">1</span> &amp;&amp; ![[<span class="keyword">self</span> valueForKey:<span class="string">@"_isTransitioning"</span>] boolValue];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">43</span></pre></td><td class="code"><pre><span class="line">&#125;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">44</span></pre></td><td class="code"><pre><span class="line"></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">45</span></pre></td><td class="code"><pre><span class="line"><span class="keyword">@end</span></span></pre></td></tr></table></figure></li>
+<li>现在, 我们的app就支持丝滑的全屏返回手势了</li>
+<li>还可以发现一个有趣的东西, 执行以下打印:<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"\ninteractivePopGestureRecognizer.delegate:\n%@\ninteractiveTransition:\n%@"</span>,<span class="keyword">self</span>.interactivePopGestureRecognizer.delegate, interactiveTransition);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">    <span class="built_in">NSLog</span>(<span class="string">@"-----------------------------------------"</span>);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSLog</span>(<span class="string">@"\ninteractivePopGestureRecognizer.view:\n%@\nself.view:\n%@"</span>,<span class="keyword">self</span>.interactivePopGestureRecognizer.view, <span class="keyword">self</span>.view);</span></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">2018-04-17 11:59:32.095941+0800 ATest[2222:78230] </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">interactivePopGestureRecognizer.delegate:</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line">&lt;_UINavigationInteractiveTransition: 0x7fadf3404690&gt;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">interactiveTransition:</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line">&lt;_UINavigationInteractiveTransition: 0x7fadf3404690&gt;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line">2018-04-17 11:59:32.096143+0800 ATest[2222:78230] -----------------------------------------</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line">2018-04-17 11:59:32.096798+0800 ATest[2222:78230] </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line">interactivePopGestureRecognizer.view:</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line">&lt;UILayoutContainerView: 0x7fadf3602b60; frame &#x3D; (0 0; 375 667); autoresize &#x3D; W+H; gestureRecognizers &#x3D; &lt;NSArray: 0x60400024f0c0&gt;; layer &#x3D; &lt;CALayer: 0x60000003c140&gt;&gt;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">10</span></pre></td><td class="code"><pre><span class="line">self.view:</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">11</span></pre></td><td class="code"><pre><span class="line">&lt;UILayoutContainerView: 0x7fadf3602b60; frame &#x3D; (0 0; 375 667); autoresize &#x3D; W+H; gestureRecognizers &#x3D; &lt;NSArray: 0x60400024f0c0&gt;; layer &#x3D; &lt;CALayer: 0x60000003c140&gt;&gt;</span></pre></td></tr></table></figure></li>
+<li>可以看到, <code>self.interactivePopGestureRecognizer.delegate</code> 跟我们辛辛苦苦才获得的<code>interactiveTransition</code>原来是同个对象, 这样我们可以直接使用<code>self.interactivePopGestureRecognizer</code>的<code>delegate</code>作为自定义手势的<code>target</code>了</li>
+<li>同样的, <code>self.interactivePopGestureRecognizer.view</code>其实就是<code>UINavigationController</code>的<code>view</code>, 所以可以对我们上面的<code>viewDidLoad</code>代码做下简化<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">2</span></pre></td><td class="code"><pre><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">3</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">// 注意 : 要让interactivePopGestureRecognizer失效</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">4</span></pre></td><td class="code"><pre><span class="line">    <span class="keyword">self</span>.interactivePopGestureRecognizer.enabled = <span class="literal">NO</span>;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">5</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">//自定义pan手势</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">6</span></pre></td><td class="code"><pre><span class="line">    <span class="built_in">UIPanGestureRecognizer</span> *popRecognizer = [[<span class="built_in">UIPanGestureRecognizer</span> alloc] init];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">7</span></pre></td><td class="code"><pre><span class="line">    popRecognizer.delegate = <span class="keyword">self</span>;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">8</span></pre></td><td class="code"><pre><span class="line">    popRecognizer.maximumNumberOfTouches = <span class="number">1</span>;</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">9</span></pre></td><td class="code"><pre><span class="line">    [<span class="keyword">self</span>.view addGestureRecognizer:popRecognizer];</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">10</span></pre></td><td class="code"><pre><span class="line">    </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">11</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">//获取action</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">12</span></pre></td><td class="code"><pre><span class="line">    SEL handleTransition = <span class="built_in">NSSelectorFromString</span>(<span class="string">@"handleNavigationTransition:"</span>);</span></pre></td></tr><tr><td class="gutter"><pre><span class="line">13</span></pre></td><td class="code"><pre><span class="line">    <span class="comment">//绑定taget-action</span></span></pre></td></tr><tr><td class="gutter"><pre><span class="line">14</span></pre></td><td class="code"><pre><span class="line">    [popRecognizer addTarget:<span class="keyword">self</span>.interactivePopGestureRecognizer.delegate action:handleTransition];  </span></pre></td></tr><tr><td class="gutter"><pre><span class="line">15</span></pre></td><td class="code"><pre><span class="line">&#125;</span></pre></td></tr></table></figure>
+<h5 id="运行-效果是一样的"><a href="#运行-效果是一样的" class="headerlink" title="运行, 效果是一样的"></a>运行, 效果是一样的</h5></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/04/%E4%BD%BF%E7%94%A8%E8%BF%87%E7%9A%84iOS%E7%AC%AC%E4%B8%89%E6%96%B9%E5%BA%93/" rel="next" title="使用过的iOS第三方库">
+                <i class="fa fa-chevron-left"></i> 使用过的iOS第三方库
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">coderchou</p>
+              <p class="site-description motion-element" itemprop="description">一个iOS开发菜鸡</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%20%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#场景一-如果自定义了系统导航栏的返回按钮-系统的左侧边缘返回手势将会失效"><span class="nav-number">1.</span> <span class="nav-text">场景一 :  如果自定义了系统导航栏的返回按钮, 系统的左侧边缘返回手势将会失效</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#解决思路如下"><span class="nav-number">1.0.1.</span> <span class="nav-text">解决思路如下:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#代码如下"><span class="nav-number">1.0.2.</span> <span class="nav-text">代码如下:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#场景二-系统默认的侧滑返回手势-只能在左侧边缘右滑触发-而现在很多app-都有全屏返回这个需求"><span class="nav-number">2.</span> <span class="nav-text">场景二 : 系统默认的侧滑返回手势, 只能在左侧边缘右滑触发,  而现在很多app 都有全屏返回这个需求</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#解决方法"><span class="nav-number">2.0.1.</span> <span class="nav-text">解决方法:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#运行-效果是一样的"><span class="nav-number">2.0.2.</span> <span class="nav-text">运行, 效果是一样的</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">coderchou</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
