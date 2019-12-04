@@ -43,6 +43,10 @@
       <categories>
         <category>iOS</category>
       </categories>
+      <tags>
+        <tag>手势</tag>
+        <tag>kvc</tag>
+      </tags>
   </entry>
   <entry>
     <title>使用过的iOS第三方库</title>
